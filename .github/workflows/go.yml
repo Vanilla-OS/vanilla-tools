@@ -22,7 +22,7 @@ jobs:
     - name: Install build dependencies
       run: |
           apt-get update
-          apt-get install -y pkg-config build-essential libxxf86vm-dev
+          apt-get install -y pkg-config build-essential libxxf86vm-dev libgl-dev
 
     - name: Build
       run: go build -o vanilla-tools/ ./...
