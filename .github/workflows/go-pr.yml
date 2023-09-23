@@ -1,8 +1,9 @@
-name: Go
+name: Go (PR)
 
 on:
-  push:
+  pull_request_target:
     branches: [ "main" ]
+    types: [opened, synchronize, reopened]
 
 jobs:
 
@@ -26,15 +27,3 @@ jobs:
 
     - name: Build
       run: go build -o vanilla-tools/ ./...
-    
-    - name: Compress
-      run: tar -czvf vanilla-tools.tar.gz vanilla-tools/*
-
-    - uses: softprops/action-gh-release@v1
-      with:
-        token: "${{ secrets.GITHUB_TOKEN }}"
-        tag_name: "continuous"
-        prerelease: true
-        name: "Continuous Build"
-        files: |
-          vanilla-tools.tar.gz
