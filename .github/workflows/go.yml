@@ -3,6 +3,7 @@ name: Go
 on:
   push:
     branches: [ "main" ]
+  pull_request:
 
 jobs:
 
@@ -12,12 +13,12 @@ jobs:
       image: ghcr.io/vanilla-os/pico:main
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v5
       with:
-        go-version: 1.19
+        go-version: 1.21
 
     - name: Install build dependencies
       run: |
@@ -28,9 +29,12 @@ jobs:
       run: go build -o vanilla-tools/ ./...
     
     - name: Compress
+      if: github.repository == 'Vanilla-OS/vanilla-tools' && github.ref == 'refs/heads/main'
       run: tar -czvf vanilla-tools.tar.gz vanilla-tools/*
 
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - name: Release
+      if: github.repository == 'Vanilla-OS/vanilla-tools' && github.ref == 'refs/heads/main'
+      uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "continuous"
