@@ -3,6 +3,7 @@ name: Go
 on:
   push:
     branches: [ "main" ]
+  pull_request:
 
 jobs:
 
@@ -28,9 +29,12 @@ jobs:
       run: go build -o vanilla-tools/ ./...
     
     - name: Compress
+      if: github.repository == 'Vanilla-OS/vanilla-tools' && github.ref == 'refs/heads/main'
       run: tar -czvf vanilla-tools.tar.gz vanilla-tools/*
 
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - name: Release
+      if: github.repository == 'Vanilla-OS/vanilla-tools' && github.ref == 'refs/heads/main'
+      uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "continuous"
