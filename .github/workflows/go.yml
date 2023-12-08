@@ -34,11 +34,11 @@ jobs:
 
     - name: Release
       if: github.repository == 'Vanilla-OS/vanilla-tools' && github.ref == 'refs/heads/main'
-      uses: "marvinpinto/action-automatic-releases@latest"
+      uses: softprops/action-gh-release@v1
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "continuous"
+        token: "${{ secrets.GITHUB_TOKEN }}"
+        tag_name: "continuous"
         prerelease: true
-        title: "Continuous Build"
+        name: "Continuous Build"
         files: |
           vanilla-tools.tar.gz
