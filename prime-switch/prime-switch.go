@@ -4,9 +4,12 @@ package main
 	Authors:
 		Mirko Brombin <mirko@fabricators.ltd>
 		Vanilla OS Contributors <https://github.com/vanilla-os/>
-	Copyright: 2023
+	Copyright: 2023 Vanilla OS Contributors
+	Copyright 2013 Canonical Ltd (for previous work)
 	Description:
 		This program switches PRIME profiles on a Debian+ABRoot based system.
+	Based on:
+		<https://github.com/canonical/nvidia-prime/blob/1aa0d896b1935ab902173c8775871869d3cf1ee5/prime-select>
 */
 
 import (
