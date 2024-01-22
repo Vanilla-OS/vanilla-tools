@@ -31,7 +31,9 @@ const (
 func getProfile() string {
 	content, err := os.ReadFile(powerProfilePath)
 	if err != nil {
-		return "unknown"
+		// here we can assume it is on-demand by default, which is how
+		// it get set up in Debian distros
+		return "on-demand"
 	}
 
 	config := strings.TrimSpace(string(content))
