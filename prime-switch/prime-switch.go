@@ -75,24 +75,28 @@ func main() {
 
 func enableProfile(profile string) {
 	nvPowerMode := "off"
+	var profileFunc func()
 
 	switch profile {
 	case "nvidia":
 		nvPowerMode = "on"
-		enableNvidiaProfile()
+		profileFunc = enableNvidiaProfile
 	case "on-demand":
 		nvPowerMode = "on-demand"
-		enableOnDemandProfile()
+		profileFunc = enableOnDemandProfile
 	case "integrated":
 		nvPowerMode = "off"
-		enableIntegratedProfile()
+		profileFunc = enableIntegratedProfile
 	default:
 		log.Fatalf("Invalid profile: %s", profile)
 	}
 
-	if err := os.WriteFile(powerProfilePath, []byte(nvPowerMode), 0644); err != nil {
+	err := os.WriteFile(powerProfilePath, []byte(nvPowerMode), 0644)
+	if err != nil {
 		log.Fatalf("Error writing profile to config file: %s", err)
 	}
+
+	profileFunc()
 
 	fmt.Printf("Profile set to: %s\n", profile)
 }
