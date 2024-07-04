@@ -21,7 +21,7 @@ import (
 
 const binDir = "/usr/bin/"
 
-func lockBins(path string) error {
+func lockBins(path string, verbose bool) error {
 	if path == "" {
 		path = binDir
 	}
@@ -35,7 +35,10 @@ func lockBins(path string) error {
 			oldPath := path
 			newPath := fmt.Sprintf("%sprivate.%s", filepath.Dir(path)+"/", info.Name())
 
-			fmt.Printf("Locking %s\n", oldPath)
+			if verbose {
+				fmt.Printf("Locking %s\n", oldPath)
+			}
+
 			if err := os.Rename(oldPath, newPath); err != nil {
 				return err
 			}
@@ -43,7 +46,6 @@ func lockBins(path string) error {
 
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}
@@ -51,7 +53,7 @@ func lockBins(path string) error {
 	return nil
 }
 
-func unlockBins(path string) error {
+func unlockBins(path string, verbose bool) error {
 	if path == "" {
 		path = binDir
 	}
@@ -65,7 +67,10 @@ func unlockBins(path string) error {
 			oldPath := path
 			newPath := fmt.Sprintf("%s%s", filepath.Dir(path)+"/", strings.TrimPrefix(info.Name(), "private."))
 
-			fmt.Printf("Unlocking %s\n", oldPath)
+			if verbose {
+				fmt.Printf("Unlocking %s\n", oldPath)
+			}
+
 			if err := os.Rename(oldPath, newPath); err != nil {
 				return err
 			}
@@ -73,7 +78,6 @@ func unlockBins(path string) error {
 
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}
@@ -90,6 +94,7 @@ func main() {
 	lockFlag := flag.Bool("lock", false, "Locks apt and dpkg binaries")
 	unlockFlag := flag.Bool("unlock", false, "Unlocks apt and dpkg binaries")
 	dirFlag := flag.String("dpath", "", "Specify a custom path to search for apt and dpkg binaries")
+	verboseFlag := flag.Bool("verbose", false, "Enables verbose output")
 
 	flag.Parse()
 
@@ -99,7 +104,7 @@ func main() {
 	}
 
 	if *lockFlag {
-		if err := lockBins(*dirFlag); err != nil {
+		if err := lockBins(*dirFlag, *verboseFlag); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			os.Exit(1)
 		}
@@ -108,7 +113,7 @@ func main() {
 	}
 
 	if *unlockFlag {
-		if err := unlockBins(*dirFlag); err != nil {
+		if err := unlockBins(*dirFlag, *verboseFlag); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			os.Exit(1)
 		}
