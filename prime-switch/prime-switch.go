@@ -5,7 +5,7 @@ package main
 		Mirko Brombin <mirko@fabricators.ltd>
 		Vanilla OS Contributors <https://github.com/vanilla-os/>
 	Copyright:
-		2023 Vanilla OS Contributors
+		2024 Vanilla OS Contributors
 		2013 Canonical Ltd (for previous work)
 	Description:
 		This program switches PRIME profiles on a Debian+ABRoot based system.

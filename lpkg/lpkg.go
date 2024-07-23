@@ -4,7 +4,7 @@ package main
 	Authors:
 		Mirko Brombin <mirko@fabricators.ltd>
 		Vanilla OS Contributors <https://github.com/vanilla-os/>
-	Copyright: 2023
+	Copyright: 2024
 	Description:
 		This tool is used to lock apt and dpkg binaries to prevent
 		usage of the package manager in an immutable system.
