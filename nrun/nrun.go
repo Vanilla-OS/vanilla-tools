@@ -4,10 +4,10 @@ package main
 	Authors:
 		Mirko Brombin <mirko@fabricators.ltd>
 		Vanilla OS Contributors <https://github.com/vanilla-os/>
-	Copyright: 2023
+	Copyright: 2024
 	Description:
 		This program simply adds the environment variables needed to run a program with the NVIDIA GPU.
-		NOTE: I am using Go for such a simple program because all the other vanilla tools are written in Go.
+		NOTE: We are using Go for such a simple program because all the other vanilla tools are written in Go.
 */
 
 import (

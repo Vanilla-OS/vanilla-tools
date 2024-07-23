@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-artifacts:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/vanilla-os/pico:main
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 1.22
+
+    - name: Install build dependencies
+      run: |
+          apt-get update
+          apt-get install -y pkg-config build-essential xorg-dev
+
+    - name: Build
+      run: go build -o vanilla-tools/ ./...
+    
+    - name: Compress
+      run: tar -czvf vanilla-tools.tar.gz vanilla-tools/*
+    
+    - name: Calculate and Save Checksums
+      run: |
+        sha256sum vanilla-tools.tar.gz >> checksums.txt
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: vanilla-tools
+        path: |
+          checksums.txt
+          vanilla-tools.tar.gz
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build-artifacts
+    permissions:
+      contents: write # to create and upload assets to releases
+      attestations: write # to upload assets attestation for build provenance
+      id-token: write # grant additional permission to attestation action to mint the OIDC token permission
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vanilla-tools
+
+      - name: Create Release
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${{ github.ref_name }}" --generate-notes *.tar.gz checksums.txt
+
+      - name: Attest Release Files
+        id: attest
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: '*.tar.gz, checksums.txt'
