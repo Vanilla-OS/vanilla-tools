@@ -17,29 +17,30 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: 1.24
+        go-version-file: go.mod
 
     - name: Install build dependencies
       run: |
-          apt-get update
-          apt-get install -y pkg-config build-essential xorg-dev
+        dpkg --add-architecture arm64
+        apt update
+        apt install -y gcc xorg-dev gcc-aarch64-linux-gnu libgl-dev:arm64 libxcursor-dev:arm64 libxi-dev:arm64 libxinerama-dev:arm64 libxrandr-dev:arm64 libxxf86vm-dev:arm64
 
     - name: Build
-      run: go build -o vanilla-tools/ ./...
-    
-    - name: Compress
-      run: tar -czvf vanilla-tools.tar.gz vanilla-tools/*
-    
-    - name: Calculate and Save Checksums
       run: |
-        sha256sum vanilla-tools.tar.gz >> checksums.txt
+        go build -o vanilla-tools/ ./...
+        tar -czvf vanilla-tools-amd64.tar.gz vanilla-tools/*
+        GOARCH=arm64 CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc go build -o vanilla-tools/ ./...
+        tar -czvf vanilla-tools-arm64.tar.gz vanilla-tools/*
+
+    - name: Calculate and Save Checksums
+      run: sha256sum vanilla-tools*.tar.gz >> checksums.txt
 
     - uses: actions/upload-artifact@v4
       with:
         name: vanilla-tools
         path: |
           checksums.txt
-          vanilla-tools.tar.gz
+          vanilla-tools*.tar.gz
 
     - name: Release
       if: github.ref == 'refs/heads/main'
@@ -51,4 +52,4 @@ jobs:
         name: "Continuous Build"
         files: |
           checksums.txt
-          vanilla-tools.tar.gz
+          vanilla-tools*.tar.gz
